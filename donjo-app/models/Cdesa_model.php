@@ -47,7 +47,7 @@ class Cdesa_model extends CI_Model {
 	{
 		$this->db->from('cdesa c')
 			->join('mutasi_cdesa m', 'm.id_cdesa_masuk = c.id or m.cdesa_keluar = c.id', 'left')
-			->join('persil p', 'p.id = m.id_persil', 'left')
+			->join('persil p', 'p.id = m.id_persil or c.id = p.cdesa_awal', 'left')
 			->join('ref_persil_kelas k', 'k.id = p.kelas', 'left')
 			->join('cdesa_penduduk cu', 'cu.id_cdesa = c.id', 'left')
 			->join('tweb_penduduk u', 'u.id = cu.id_pend', 'left')
@@ -83,14 +83,14 @@ class Cdesa_model extends CI_Model {
 			->select('u.nik AS nik, u.nama as namapemilik, w.*')
 			->select('(CASE WHEN c.jenis_pemilik = 1 THEN u.nama ELSE c.nama_pemilik_luar END) AS namapemilik')
 			->select('(CASE WHEN c.jenis_pemilik = 1 THEN CONCAT("RT ", w.rt, " / RW ", w.rw, " - ", w.dusun) ELSE c.alamat_pemilik_luar END) AS alamat')
-			->select('COUNT(m.id) AS jumlah')
+			->select('COUNT(DISTINCT p.id) AS jumlah')
+			->order_by('cast(c.nomor as unsigned)')
 			->group_by('c.id, cu.id');
 		if ($per_page) $this->db->limit($per_page, $offset);
   	if ($kecuali)	$this->db->where("c.id not in ($kecuali)");
 		$data = $this->db
 			->get()
 			->result_array();
-
 		$j = $offset;
 		for ($i=0; $i<count($data); $i++)
 		{
