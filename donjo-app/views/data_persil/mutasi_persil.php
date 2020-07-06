@@ -1,15 +1,3 @@
-<script>
-	$(function()
-	{
-		var keyword = <?= $keyword != '' ? $keyword : '""' ?> ;
-		$( "#cari" ).autocomplete(
-			{
-				source: keyword,
-				maxShowItems: 10,
-			});
-	});
-
-</script>
 <style>
 	.input-sm
 	{
@@ -57,179 +45,130 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-								<form id="mainform" name="mainform" action="" method="post">
-								<input type="hidden" name="id" value="<?php echo $this->uri->segment(4) ?>">
-									<div class="row">
-										<div class="col-sm-12">
-											<div class="box-header with-border">
-												<h3 class="box-title">Rincian C-DESA</h3>
-											</div>
-											<div class="box-body">
-												<table class="table table-bordered table-striped table-hover" >
-													<tbody>
-														<tr>
-															<th class="horizontal">Nama Pemilik</td>
-															<td> : <?= $pemilik["namapemilik"]?></td>
-														</tr>
-														<tr>
-															<th>NIK</td>
-															<td class="horizontal"> :  <?= $pemilik["nik"]?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Alamat</td>
-															<td> :  <?= $pemilik["alamat"]?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Nomor C-DESA</td>
-															<td> : <?= $cdesa['nomor']?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Nama Pemilik Tertulis di C-Desa</td>
-															<td> : <?= $cdesa["nama_kepemilikan"]?></td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										</div>
-
-										<div class="col-sm-12">
-											<div class="box-header with-border">
-												<h3 class="box-title">Rincian Persil</h3>
-											</div>
-											<div class="box-body">
-												<table class="table table-bordered table-striped table-hover" >
-													<tbody>
-														<tr>
-															<th class="horizontal">No. Persil : No. Urut Bidang</td>
-															<td> : <?= $persil['nomor'].' : '.$persil['nomor_urut_bidang']?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Kelas Tanah</td>
-															<td> :  <?= $persil["kode"].' - '.$persil["ndesc"]?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Luas Keseluruhan (M2)</td>
-															<td> :  <?= $persil["luas_persil"]?></td>
-														</tr>
-														<tr>
-															<th class="horizontal">Lokasi</td>
-															<td> :  <?= $persil["alamat"] ?: $persil["lokasi"]?></td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-											<?php if ($persil['cdesa_awal'] == $cdesa['id']): ?>
+									<form id="mainform" name="mainform" action="" method="post">
+										<input type="hidden" name="id" value="<?php echo $this->uri->segment(4) ?>">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="box-header with-border">
+													<h3 class="box-title">Rincian C-DESA</h3>
+												</div>
 												<div class="box-body">
-													<span style="padding-right: 10px;">C-Desa ini adalah pemilik awal keseluruhan persil <?= $persil["nomor"] ?>. Kalau bukan, klik tombol berikut. </span>
-													<a href="<?= site_url('cdesa/awal_persil/'.$cdesa['id'].'/' .$persil['id'].'/1')?>" class="btn btn-social btn-flat btn-danger btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block" title="Bukan C-Desa Awal"><i class="fa fa-step-backward"></i>Bukan C-Desa Awal</a>
+													<table class="table table-bordered table-striped table-hover" >
+														<tbody>
+															<tr>
+																<th class="horizontal">Nama Pemilik</td>
+																<td> : <?= $pemilik["namapemilik"]?></td>
+															</tr>
+															<tr>
+																<th>NIK</td>
+																<td class="horizontal"> :  <?= $pemilik["nik"]?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Alamat</td>
+																<td> :  <?= $pemilik["alamat"]?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Nomor C-DESA</td>
+																<td> : <?= $cdesa['nomor']?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Nama Pemilik Tertulis di C-Desa</td>
+																<td> : <?= $cdesa["nama_kepemilikan"]?></td>
+															</tr>
+														</tbody>
+													</table>
 												</div>
-											<?php endif; ?>
-										</div>
+											</div>
 
-										<div class="col-sm-12">
-											<div class="row">
-												<div class="col-sm-9">
-													<div class="box-header with-border">
-														<h3 class="box-title">Daftar Mutasi Persil <?= $persil["nomor"]?></h3>
-													</div>
+											<div class="col-sm-12">
+												<div class="box-header with-border">
+													<h3 class="box-title">Rincian Persil</h3>
 												</div>
-												<div class="col-sm-3">
-													<div class="input-group input-group-sm pull-right">
-														<input name="cari" id="cari" class="form-control" placeholder="Cari..." type="text" value="<?=html_escape($cari_peserta)?>" onkeypress="if (event.keyCode == 13){$('#'+'mainform').attr('action', '<?=site_url("program_bantuan/search_peserta")?>');$('#'+'mainform').submit();}">
-														<div class="input-group-btn">
-															<button type="submit" class="btn btn-default" onclick="$('#'+'mainform').attr('action', '<?=site_url("program_bantuan/search_peserta")?>');$('#'+'mainform').submit();"><i class="fa fa-search"></i></button>
+												<div class="box-body">
+													<table class="table table-bordered table-striped table-hover" >
+														<tbody>
+															<tr>
+																<th class="horizontal">No. Persil : No. Urut Bidang</td>
+																<td> : <?= $persil['nomor'].' : '.$persil['nomor_urut_bidang']?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Kelas Tanah</td>
+																<td> :  <?= $persil["kode"].' - '.$persil["ndesc"]?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Luas Keseluruhan (M2)</td>
+																<td> :  <?= $persil["luas_persil"]?></td>
+															</tr>
+															<tr>
+																<th class="horizontal">Lokasi</td>
+																<td> :  <?= $persil["alamat"] ?: $persil["lokasi"]?></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<?php if ($persil['cdesa_awal'] == $cdesa['id']): ?>
+													<div class="box-body">
+														<span style="padding-right: 10px;">C-Desa ini adalah pemilik awal keseluruhan persil <?= $persil["nomor"] ?>. Kalau bukan, klik tombol berikut. </span>
+														<a href="<?= site_url('cdesa/awal_persil/'.$cdesa['id'].'/' .$persil['id'].'/1')?>" class="btn btn-social btn-flat btn-danger btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block" title="Bukan C-Desa Awal"><i class="fa fa-step-backward"></i>Bukan C-Desa Awal</a>
+													</div>
+												<?php endif; ?>
+											</div>
+
+											<div class="col-sm-12">
+												<div class="row">
+													<div class="col-sm-9">
+														<div class="box-header with-border">
+															<h3 class="box-title">Daftar Mutasi Persil <?= $persil["nomor"]?></h3>
 														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-										<div class="col-sm-12">
-											<div class="table-responsive">
-												<table class="table table-bordered table-striped dataTable table-hover">
-													<thead class="bg-gray disabled color-palette">
-														<tr>
-															<th class="padat">No</th>
-															<th class="padat">Aksi</th>
-															<th>No. Bidang Mutasi</th>
-															<th>Luas Masuk (M2)</th>
-															<th>Luas Keluar (M2)</th>
-															<th>NOP</th>
-															<th>Tanggal Mutasi</th>
-															<th>Keterangan</th>
-														</tr>
-													</thead>
-													<tbody>
-														<?php $nomer = $paging->offset;?>
-														<?php foreach ($bidang as $key => $item): $nomer++;?>
+											<div class="col-sm-12">
+												<div class="table-responsive">
+													<table class="table table-bordered table-striped dataTable table-hover">
+														<thead class="bg-gray disabled color-palette">
 															<tr>
-																<td class="text-center"><?= $nomer?></td>
-																<td nowrap class="text-center">
-																	<a href="<?= site_url("cdesa/create_bidang/$item[id_cdesa_masuk]/$item[id_persil]/$item[id]")?>" class="btn bg-orange btn-flat btn-sm" title="Ubah"><i class="fa fa-edit"></i></a>
-																	<a href="#" data-href="<?= site_url("cdesa/hapus_bidang/$cdesa[id]/$item[id]")?>" class="btn bg-maroon btn-flat btn-sm"  title="Hapus" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash-o"></i></a>
-																</td>
-																<td><?= $item['no_bidang_persil']?></td>
-																<td><?= $item['luas_masuk']?>
-																	<?php if ($item['cdesa_keluar'] and $item['id_cdesa_masuk'] == $cdesa['id']): ?>
-																		dari <a href="<?= site_url("cdesa/mutasi/$item[cdesa_keluar]/$item[id_persil]")?>">C-Desa ini</a>
-																	<?php endif; ?>
-																</td>
-																<td><?= $item['luas_keluar']?>
-																	<?php if ($item['id_cdesa_masuk'] <> $cdesa['id']): ?>
-																		ke <a href="<?= site_url("cdesa/mutasi/$item[id_cdesa_masuk]/$item[id_persil]")?>">C-Desa ini</a>
-																	<?php endif; ?>
-																</td>
-																<td><?= $item['no_objek_pajak']?></td>
-																<td><?= tgl_indo_out($item['tanggal_mutasi'])?></td>
-																<td><?= $item['keterangan']?></td>
+																<th class="padat">No</th>
+																<th class="padat">Aksi</th>
+																<th>No. Bidang Mutasi</th>
+																<th>Luas Masuk (M2)</th>
+																<th>Luas Keluar (M2)</th>
+																<th>NOP</th>
+																<th>Tanggal Mutasi</th>
+																<th>Keterangan</th>
 															</tr>
-														<?php endforeach; ?>
-													</tbody>
-												</table>
+														</thead>
+														<tbody>
+															<?php $nomer = $paging->offset;?>
+															<?php foreach ($bidang as $key => $item): $nomer++;?>
+																<tr>
+																	<td class="text-center"><?= $nomer?></td>
+																	<td nowrap class="text-center">
+																		<a href="<?= site_url("cdesa/create_bidang/$item[id_cdesa_masuk]/$item[id_persil]/$item[id]")?>" class="btn bg-orange btn-flat btn-sm" title="Ubah"><i class="fa fa-edit"></i></a>
+																		<a href="#" data-href="<?= site_url("cdesa/hapus_bidang/$cdesa[id]/$item[id]")?>" class="btn bg-maroon btn-flat btn-sm"  title="Hapus" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash-o"></i></a>
+																	</td>
+																	<td><?= $item['no_bidang_persil']?></td>
+																	<td><?= $item['luas_masuk']?>
+																		<?php if ($item['cdesa_keluar'] and $item['id_cdesa_masuk'] == $cdesa['id']): ?>
+																			dari <a href="<?= site_url("cdesa/mutasi/$item[cdesa_keluar]/$item[id_persil]")?>">C-Desa ini</a>
+																		<?php endif; ?>
+																	</td>
+																	<td><?= $item['luas_keluar']?>
+																		<?php if ($item['id_cdesa_masuk'] <> $cdesa['id']): ?>
+																			ke <a href="<?= site_url("cdesa/mutasi/$item[id_cdesa_masuk]/$item[id_persil]")?>">C-Desa ini</a>
+																		<?php endif; ?>
+																	</td>
+																	<td><?= $item['no_objek_pajak']?></td>
+																	<td><?= tgl_indo_out($item['tanggal_mutasi'])?></td>
+																	<td><?= $item['keterangan']?></td>
+																</tr>
+															<?php endforeach; ?>
+														</tbody>
+													</table>
+												</div>
 											</div>
 										</div>
-
-									</div>
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="dataTables_length">
-                        <form id="paging" action="<?= site_url("cdesa/mutasi/$cdesa[id]/$persil[id]")?>" method="post" class="form-horizontal">
-                         <label>
-                            Tampilkan
-                            <select name="per_page" class="form-control input-sm" onchange="$('#mainform').submit();" id="per_page_input">
-      	                      <option value="20" <?php selected($per_page, 20); ?> >20</option>
-                              <option value="50" <?php selected($per_page, 50); ?> >50</option>
-                              <option value="100" <?php selected($per_page, 100); ?> >100</option>
-                            </select>
-        	                  Dari
-                            <strong><?= $paging->num_rows?></strong>
-                            Total Data
-                          </label>
-                        </form>
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="dataTables_paginate paging_simple_numbers">
-                        <ul class="pagination">
-                          <?php if ($paging->start_link): ?>
-                            <li><a href="<?=site_url("program_bantuan/detail/$paging->start_link/$detail[id]")?>" aria-label="First"><span aria-hidden="true">Awal</span></a></li>
-                          <?php endif; ?>
-                          <?php if ($paging->prev): ?>
-                            <li><a href="<?=site_url("program_bantuan/detail/$paging->prev/$detail[id]")?>" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-                          <?php endif; ?>
-                          <?php for ($i=$paging->start_link;$i<=$paging->end_link;$i++): ?>
-                            <li <?=jecho($p, $i, "class='active'")?>><a href="<?= site_url("program_bantuan/detail/$i/$detail[id]")?>"><?= $i?></a></li>
-                          <?php endfor; ?>
-                          <?php if ($paging->next): ?>
-                            <li><a href="<?=site_url("program_bantuan/detail/$paging->next/$detail[id]")?>" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-                          <?php endif; ?>
-                          <?php if ($paging->end_link): ?>
-                            <li><a href="<?=site_url("program_bantuan/detail/$paging->end_link/$detail[id]")?>" aria-label="Last"><span aria-hidden="true">Akhir</span></a></li>
-                          <?php endif; ?>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-								</form>
+									</form>
 								</div>
 							</div>
 						</div>
