@@ -30,6 +30,7 @@ class Cdesa extends Admin_Controller {
 		redirect($this->controller);
 	}
 
+	// TODO: fix
 	public function autocomplete()
 	{
 		$data = $this->data_persil_model->autocomplete($this->input->post('cari'));
@@ -37,8 +38,7 @@ class Cdesa extends Admin_Controller {
 	}
 
 	public function search(){
-		$_SESSION['cari'] = $this->input->post('cari');
-		if ($_SESSION['cari'] == '') unset($_SESSION['cari']);
+		$this->session->cari = $this->input->post('cari') ?: NULL;
 		redirect('cdesa');
 	}
 
@@ -57,20 +57,12 @@ class Cdesa extends Admin_Controller {
 		$data['keyword'] = $this->data_persil_model->autocomplete();
 		$data["desa"] = $this->config_model->get_data();
 		$data["cdesa"] = $this->cdesa_model->list_c_desa($data['paging']->offset, $data['paging']->per_page);
-		$data["persil_peruntukan"] = $this->data_persil_model->list_persil_peruntukan();
-		$data["persil_jenis"] = $this->data_persil_model->list_persil_jenis();
 		$data["persil_kelas"] = $this->data_persil_model->list_persil_kelas();
 
 		$this->load->view('header', $this->header);
 		$this->load->view('nav', $nav);
 		$this->load->view('data_persil/c_desa', $data);
 		$this->load->view('footer');
-	}
-
-	public function import()
-	{
-		$data['form_action'] = site_url("data_persil/import_proses");
-		$this->load->view('data_persil/import', $data);
 	}
 
 	public function rincian($id)
@@ -115,7 +107,7 @@ class Cdesa extends Admin_Controller {
 		$post = $this->input->post();
 		$data = array();
 		$data["mode"] = $mode;
-		$data["penduduk"] = $this->data_persil_model->list_penduduk();
+		$data["penduduk"] = $this->cdesa_model->list_penduduk();
 		if ($mode === 'edit')
 		{
 			$data['cdesa'] = $this->cdesa_model->get_cdesa($id);
@@ -129,7 +121,7 @@ class Cdesa extends Admin_Controller {
 					# Pemilik desa
 					if (!empty($post['nik']))
 					{
-						$data['pemilik'] = $this->data_persil_model->get_penduduk($post['nik'], $nik=true);
+						$data['pemilik'] = $this->cdesa_model->get_penduduk($post['nik'], $nik=true);
 					}
 					break;
 				case '2':
@@ -163,7 +155,7 @@ class Cdesa extends Admin_Controller {
 				$data['pemilik'] = $this->cdesa_model->get_pemilik($id);
 				if ($post['nik'] and $$data['pemilik']['nik'] != $post['nik'])
 				{
-					$data['pemilik'] = $this->data_persil_model->get_penduduk($post['nik'], $nik=true);
+					$data['pemilik'] = $this->cdesa_model->get_penduduk($post['nik'], $nik=true);
 				}
 				$data['cdesa']['jenis_pemilik'] = $jenis_pemilik_baru;
 				break;
@@ -245,8 +237,6 @@ class Cdesa extends Admin_Controller {
 
 		$data['list_persil'] = $this->data_persil_model->list_persil();
 		$data["persil_lokasi"] = $this->data_persil_model->list_dusunrwrt();
-		$data["persil_peruntukan"] = $this->cdesa_model->list_persil_peruntukan();
-		$data["persil_jenis"] = $this->cdesa_model->list_persil_jenis();
 		$data["persil_kelas"] = $this->referensi_model->list_by_id('ref_persil_kelas');
 		$data["persil_sebab_mutasi"] = $this->referensi_model->list_by_id('ref_persil_mutasi');
 
@@ -276,6 +266,7 @@ class Cdesa extends Admin_Controller {
 		redirect("cdesa/mutasi/$cdesa/$id_persil");
 	}
 
+	// TODO: gunakan pada waktu validasi C-Desa
 	public function cek_nomor($nomor)
 	{
 		$id_cdesa = $this->input->post('id');
@@ -298,6 +289,7 @@ class Cdesa extends Admin_Controller {
 		}
 	}
 
+	// TODO: perbaiki
 	public function panduan()
 	{
 		$this->load->helper('form');
@@ -320,16 +312,16 @@ class Cdesa extends Admin_Controller {
 		redirect("cdesa");
 	}
 
+	public function import()
+	{
+		$data['form_action'] = site_url("data_persil/import_proses");
+		$this->load->view('data_persil/import', $data);
+	}
+
 	public function import_proses()
 	{
 		$this->data_persil_model->impor_persil();
 		redirect("data_persil");
-	}
-
-	public function cetak_persil($o=0)
-	{
-		$data['data_persil'] = $this->data_persil_model->list_persil('', $o, 0, 10000);
-		$this->load->view('data_persil/persil_print', $data);
 	}
 
 	public function cetak($o=0)

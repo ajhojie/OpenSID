@@ -7,6 +7,7 @@ class Cdesa_model extends CI_Model {
 		$this->load->model('data_persil_model');
 	}
 
+	// TODO: perbaiki
 	public function autocomplete($cari='')
 	{
 		$sql = "SELECT
@@ -31,7 +32,7 @@ class Cdesa_model extends CI_Model {
 
 	private function search_sql()
 	{
-		if (isset($_SESSION['cari']))
+		if ($this->session->cari)
 		{
 			$cari = $this->session->cari;
 			$cari = $this->db->escape_like_str($cari);
@@ -350,24 +351,7 @@ class Cdesa_model extends CI_Model {
 		return $data;
 	}
 
-	public function list_persil_peruntukan()
-	{
-		$data = $this->db->order_by('nama')
-			->get('data_persil_peruntukan')
-			->result_array();
-		$result = array_combine(array_column($data, 'id'), $data);
-		return $result;
-	}
-
-	public function list_persil_jenis()
-	{
-		$data = $this->db->order_by('nama')
-			->get('data_persil_jenis')
-			->result_array();
-		$result = array_combine(array_column($data, 'id'), $data);
-		return $result;
-	}
-
+	// TODO: ganti ke impor cdesa
 	public function impor_persil()
 	{
 		$this->load->library('Spreadsheet_Excel_Reader');
@@ -469,6 +453,55 @@ class Cdesa_model extends CI_Model {
 		$hasil .= "</p>";
 		return $hasil;
 	}
+
+	// TODO: apakah bisa diambil dari penduduk_model?
+	public function get_penduduk($id, $nik=false)
+	{
+		$this->db->select('p.id, p.nik,p.nama,k.no_kk,w.rt,w.rw,w.dusun')
+			->from('tweb_penduduk p')
+			->join('tweb_keluarga k','k.id = p.id_kk', 'left')
+			->join('tweb_wil_clusterdesa w', 'w.id = p.id_cluster', 'left');
+		if ($nik)
+			$this->db->where('p.nik', $id);
+		else
+			$this->db->where('p.id', $id);
+		$data = $this->db->get()->row_array();
+		return $data;
+	}
+
+	// TODO: apakah bisa diambil dari penduduk_model?
+	public function list_penduduk()
+	{
+		$strSQL = "SELECT p.nik,p.nama,k.no_kk,w.rt,w.rw,w.dusun FROM tweb_penduduk p
+			LEFT JOIN tweb_keluarga k ON k.id = p.id_kk
+			LEFT JOIN tweb_wil_clusterdesa w ON w.id = p.id_cluster
+			WHERE 1 ORDER BY nama";
+		$query = $this->db->query($strSQL);
+		$data = "";
+		$data = $query->result_array();
+		if ($query->num_rows() > 0)
+		{
+			$j = 0;
+			for ($i=0; $i<count($data); $i++)
+			{
+				if ($data[$i]['nik'] != "")
+				{
+					$data1[$j]['id']=$data[$i]['nik'];
+					$data1[$j]['nik']=$data[$i]['nik'];
+					$data1[$j]['nama']=strtoupper($data[$i]['nama'])." [NIK: ".$data[$i]['nik']."] / [NO KK: ".$data[$i]["no_kk"]."]";
+					$data1[$j]['info']= "RT/RW ". $data[$i]['rt']."/".$data[$i]['rw']." - ".strtoupper($data[$i]['dusun']);
+					$j++;
+				}
+			}
+			$hasil2 = $data1;
+		}
+		else
+		{
+			$hasil2 = false;
+		}
+		return $hasil2;
+	}
+
 
 }
 ?>
