@@ -398,30 +398,37 @@ class Cdesa_model extends CI_Model {
 
 	public function get_cetak_bidang($id_cdesa, $tipe='')
 	{
+		// Mutasi masuk
 		$this->db
-			->select('m.*, m.cdesa_keluar as id_cdesa_keluar, p.id as id_persil, p.nomor as nopersil, p.nomor_urut_bidang, p.cdesa_awal, p.luas_persil, cm.nomor as cdesa_masuk, ck.nomor as cdesa_keluar, rk.kode as kelas_tanah, rm.nama as sebabmutasi')
-			->from('persil p')
-			->join('mutasi_cdesa m', 'p.id = m.id_persil', 'left')
+			->select('m.tanggal_mutasi, m.luas, m.cdesa_keluar as id_cdesa_keluar, p.id as id_persil, p.nomor as nopersil, p.nomor_urut_bidang, 0 as cdesa_awal, p.luas_persil, c.nomor as cdesa_masuk, 0 as cdesa_keluar, rk.kode as kelas_tanah, rm.nama as sebabmutasi')
+			->from('mutasi_cdesa m')
+			->join('persil p', 'p.id = m.id_persil', 'left')
 			->join('ref_persil_kelas rk', 'p.kelas = rk.id', 'left')
 			->join('ref_persil_mutasi rm', 'm.jenis_mutasi = rm.id', 'left')
-			->join('cdesa cm', 'cm.id = m.id_cdesa_masuk', 'left')
-			->join('cdesa ck', 'ck.id = m.cdesa_keluar', 'left')
-			->group_start()
-				->where('m.id_cdesa_masuk', $id_cdesa)
-				->or_where('m.cdesa_keluar', $id_cdesa)
-			->group_end()
+			->join('cdesa c', 'c.id = m.cdesa_keluar', 'left')
+			->where('m.id_cdesa_masuk', $id_cdesa)
 			->where('rk.tipe', $tipe);
-		$mutasi = $this->db->get_compiled_select();
+		$sql_masuk = $this->db->get_compiled_select();
+		// Mutasi keluar
 		$this->db
-			->select('m.*, m.cdesa_keluar as id_cdesa_keluar, p.id as id_persil, p.nomor as nopersil, p.nomor_urut_bidang, p.cdesa_awal, p.luas_persil, 0 as cdesa_masuk, 0 as cdesa_keluar, rk.kode as kelas_tanah, rm.nama as sebabmutasi')
-			->from('persil p')
-			->join('mutasi_cdesa m', 'p.id = m.id_persil', 'left')
+			->select('m.tanggal_mutasi, m.luas, m.cdesa_keluar as id_cdesa_keluar, p.id as id_persil, p.nomor as nopersil, p.nomor_urut_bidang, 0 as cdesa_awal, p.luas_persil, 0 as cdesa_masuk, c.nomor as cdesa_keluar, rk.kode as kelas_tanah, rm.nama as sebabmutasi')
+			->from('mutasi_cdesa m')
+			->join('persil p', 'p.id = m.id_persil', 'left')
 			->join('ref_persil_kelas rk', 'p.kelas = rk.id', 'left')
 			->join('ref_persil_mutasi rm', 'm.jenis_mutasi = rm.id', 'left')
+			->join('cdesa c', 'c.id = m.id_cdesa_masuk', 'left')
+			->where('m.cdesa_keluar', $id_cdesa)
+			->where('rk.tipe', $tipe);
+		$sql_keluar = $this->db->get_compiled_select();
+		// Persil milik awal
+		$this->db
+			->select('"" as tanggal_mutasi, 0 as luas, 0 as id_cdesa_keluar, p.id as id_persil, p.nomor as nopersil, p.nomor_urut_bidang, p.cdesa_awal, p.luas_persil, 0 as cdesa_masuk, 0 as cdesa_keluar, rk.kode as kelas_tanah, "" as sebabmutasi')
+			->from('persil p')
+			->join('ref_persil_kelas rk', 'p.kelas = rk.id')
 			->where('p.cdesa_awal', $id_cdesa)
 			->where('rk.tipe', $tipe);
-		$cdesa_awal = $this->db->get_compiled_select();
-		$sql = '('.$mutasi.') UNION ('.$cdesa_awal.') ORDER BY nopersil, nomor_urut_bidang, tanggal_mutasi';
+		$sql_cdesa_awal = $this->db->get_compiled_select();
+		$sql = '('.$sql_masuk.') UNION ('.$sql_keluar.') UNION ('.$sql_cdesa_awal.') ORDER BY nopersil, nomor_urut_bidang, cdesa_awal DESC, tanggal_mutasi';
 		$data = $this->db->query($sql)->result_array();
 
 		$persil_ini = 0;
@@ -449,13 +456,13 @@ class Cdesa_model extends CI_Model {
 		return $data;
 	}
 
-	private function format_mutasi($id_cdesa, $mutasi, $cek_cdesa_awal = false)
+	private function format_mutasi($id_cdesa, $mutasi)
 	{
 		$keluar = $mutasi['id_cdesa_keluar'] == $id_cdesa;
 		$div = $keluar ? 'class="out"' : null;
 		$hasil = "<p $div>";
 		$hasil .= $mutasi['sebabmutasi'];
-		$hasil .= $keluar ? ' ke C No '.str_pad($mutasi['cdesa_masuk'], 4, '0', STR_PAD_LEFT) : ' dari C No '.str_pad($mutasi['cdesa_keluar'], 4, '0', STR_PAD_LEFT);
+		$hasil .= $keluar ? ' ke C No '.str_pad($mutasi['cdesa_keluar'], 4, '0', STR_PAD_LEFT) : ' dari C No '.str_pad($mutasi['cdesa_masuk'], 4, '0', STR_PAD_LEFT);
 		$hasil .= !empty($mutasi['luas']) ? ", Seluas ".number_format($mutasi['luas'])." m<sup>2</sup>, " : null;
 		$hasil .= !empty($mutasi['tanggal_mutasi']) ? tgl_indo_out($mutasi['tanggal_mutasi'])."<br />" : null;
 		$hasil .= !empty($mutasi['keterangan']) ? $mutasi['keterangan']: null;
