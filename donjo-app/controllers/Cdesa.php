@@ -33,7 +33,7 @@ class Cdesa extends Admin_Controller {
 	// TODO: fix
 	public function autocomplete()
 	{
-		$data = $this->data_persil_model->autocomplete($this->input->post('cari'));
+		$data = $this->cdesa_model->autocomplete($this->input->post('cari'));
 		echo json_encode($data);
 	}
 

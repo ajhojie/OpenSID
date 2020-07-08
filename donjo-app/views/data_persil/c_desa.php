@@ -4,7 +4,7 @@
 	    source: function( request, response ) {
 	      $.ajax( {
 					type: "POST",
-	        url: '<?= site_url("data_persil/autocomplete")?>',
+	        url: '<?= site_url("cdesa/autocomplete")?>',
 	        dataType: "json",
 	        data: {
 	          cari: request.term
@@ -14,7 +14,7 @@
 	        }
 	      } );
 	    },
-	    minLength: 2,
+	    minLength: 1,
 	  } );
   } );
 </script>

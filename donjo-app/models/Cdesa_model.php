@@ -7,22 +7,33 @@ class Cdesa_model extends CI_Model {
 		$this->load->model('data_persil_model');
 	}
 
-	// TODO: perbaiki
 	public function autocomplete($cari='')
 	{
-		$sql = "SELECT
-					pemilik_luar AS nik
-				FROM
-					data_persil
-				WHERE pemilik_luar LIKE '%$cari%'
-				UNION
-				SELECT
-					p.nama AS nik
-				FROM
-					data_persil u
-				LEFT JOIN tweb_penduduk p ON
-					u.id_pend = p.id
-				WHERE p.nama LIKE '%$cari%'";
+		$cari = $this->db->escape_like_str($cari);
+		$sql_kolom = [];
+		$list_kolom = [
+			'nomor' => 'cdesa',
+			'nama_pemilik_luar' => 'cdesa',
+			'nama_kepemilikan' => 'cdesa'
+		];
+		foreach ($list_kolom as $kolom => $tabel)
+		{
+			$this->db->select($kolom.' as item')
+				->distinct()->from($tabel)
+				->order_by('item');
+			if ($cari) $this->db->like($kolom, $cari);
+			$sql_kolom[] = $this->db->get_compiled_select();
+		}
+		$this->db->select('u.nama as item')
+			->from('cdesa c')
+			->distinct()
+			->join('cdesa_penduduk cu', 'cu.id_cdesa = c.id', 'left')
+			->join('tweb_penduduk u', 'u.id = cu.id_pend', 'left')
+			->order_by('item');
+			if ($cari) $this->db->like('u.nama', $cari);
+			$sql_kolom[] = $this->db->get_compiled_select();;
+		$sql = '('.implode(') UNION (', $sql_kolom).')';
+
 		$query = $this->db->query($sql);
 		$data = $query->result_array();
 
@@ -37,10 +48,12 @@ class Cdesa_model extends CI_Model {
 			$cari = $this->session->cari;
 			$cari = $this->db->escape_like_str($cari);
 			$this->db
-				->like('u.nama', $cari)
-				->or_like('c.nama_pemilik_luar', $cari)
-				->or_like('c.nama_kepemilikan', $cari)
-				->or_like('c.nomor', $cari);
+				->group_start()
+					->like('u.nama', $cari)
+					->or_like('c.nama_kepemilikan', $cari)
+					->or_like('c.nama_kepemilikan', $cari)
+					->or_like('c.nomor', $cari)
+				->group_end();
 		}
 	}
 

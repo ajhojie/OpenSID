@@ -1,5 +1,5 @@
 <?php
-class Data_persil_model extends CI_Model {
+class Data_persil_model extends MY_Model {
 
 	public function __construct()
 	{
@@ -8,24 +8,7 @@ class Data_persil_model extends CI_Model {
 
 	public function autocomplete($cari='')
 	{
-		$sql = "SELECT
-					pemilik_luar AS nik
-				FROM
-					data_persil
-				WHERE pemilik_luar LIKE '%$cari%'
-				UNION
-				SELECT
-					p.nama AS nik
-				FROM
-					data_persil u
-				LEFT JOIN tweb_penduduk p ON
-					u.id_pend = p.id
-				WHERE p.nama LIKE '%$cari%'";
-		$query = $this->db->query($sql);
-		$data = $query->result_array();
-
-		$str = autocomplete_data_ke_str($data);
-		return $str;
+		return $this->autocomplete_str('nomor', 'persil', $cari);
 	}
 
 	private function search_sql()
