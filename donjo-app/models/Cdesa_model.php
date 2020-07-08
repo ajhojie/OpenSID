@@ -151,7 +151,7 @@ class Cdesa_model extends CI_Model {
 		return $luas_total;
 	}
 
-	public function get_persil($id_bidang)
+	public function get_persil($id_mutasi)
 	{
 		$data = $this->db->select('p.*, k.kode, k.tipe, k.ndesc')
 			->select('(CASE WHEN p.id_wilayah IS NOT NULL THEN CONCAT("RT ", w.rt, " / RW ", w.rw, " - ", w.dusun) ELSE p.lokasi END) AS alamat')
@@ -160,17 +160,17 @@ class Cdesa_model extends CI_Model {
 			->join('persil p', 'm.id_persil = p.id', 'left')
 			->join('ref_persil_kelas k', 'k.id = p.kelas', 'left')
 			->join('tweb_wil_clusterdesa w', 'w.id = p.id_wilayah', 'left')
-			->where('m.id', $id_bidang)
+			->where('m.id', $id_mutasi)
 			->get()
 			->row_array();
 		return $data;
 	}
 
-	public function get_bidang($id_bidang)
+	public function get_mutasi($id_mutasi)
 	{
 		$data = $this->db->select('m.*')
 			->from('mutasi_cdesa m')
-			->where('m.id', $id_bidang)
+			->where('m.id', $id_mutasi)
 			->get('')
 			->row_array();
 		return $data;
@@ -247,14 +247,12 @@ class Cdesa_model extends CI_Model {
 		$this->db->insert('cdesa_penduduk', $data);
 	}
 
-	public function simpan_mutasi($id_cdesa, $id_bidang, $post)
+	public function simpan_mutasi($id_cdesa, $id_mutasi, $post)
 	{
 		$data = array();
 		$data['id_persil'] = $post['id_persil'];
 		$data['id_cdesa_masuk'] = $id_cdesa;
-		// $data['jenis_bidang_persil'] = $post['jenis_bidang_persil'];
 		$data['no_bidang_persil'] = bilangan($post['no_bidang_persil']) ?: NULL;
-		// $data['peruntukan'] = $post['peruntukan'];
 		$data['no_objek_pajak'] = strip_tags($post['no_objek_pajak']);
 
 		$data['tanggal_mutasi'] = $post['tanggal_mutasi'] ? tgl_indo_in($post['tanggal_mutasi']) : NULL;
@@ -263,8 +261,8 @@ class Cdesa_model extends CI_Model {
 		$data['cdesa_keluar'] = bilangan($post['cdesa_keluar']) ?: NULL;
 		$data['keterangan'] = strip_tags($post['keterangan']) ?: NULL;
 
-		if ($id_bidang)
-			$outp = $this->db->where('id', $id_bidang)->update('mutasi_cdesa', $data);
+		if ($id_mutasi)
+			$outp = $this->db->where('id', $id_mutasi)->update('mutasi_cdesa', $data);
 		else
 			$outp = $this->db->insert('mutasi_cdesa', $data);
 		if ($outp)
@@ -301,22 +299,20 @@ class Cdesa_model extends CI_Model {
 		return $data;
 	}
 
-	public function get_list_bidang($id_cdesa, $id_persil='')
+	public function get_list_mutasi($id_cdesa, $id_persil='')
 	{
 		$nomor_cdesa = $this->db->select('nomor')
 			->where('id', $id_cdesa)
 			->get('cdesa')
 			->row()->nomor;
 		$this->db
-			->select('m.*, p.nomor, rk.kode as kelas_tanah, dp.nama as peruntukan, dj.nama as jenis_persil')
+			->select('m.*, p.nomor, rk.kode as kelas_tanah')
 			->select('CONCAT("RT ", rt, " / RW ", rw, " - ", dusun) as lokasi, p.lokasi as alamat')
 			->select("IF (m.id_cdesa_masuk = {$id_cdesa}, m.luas, '') AS luas_masuk")
 			->select("IF (m.cdesa_keluar = {$id_cdesa}, m.luas, '') AS luas_keluar")
 			->from('mutasi_cdesa m')
 			->join('cdesa c', 'c.id = m.id_cdesa_masuk', 'left')
 			->join('persil p', 'p.id = m.id_persil', 'left')
-			->join('data_persil_peruntukan dp', 'm.peruntukan = dp.id', 'left')
-			->join('data_persil_jenis dj', 'm.jenis_bidang_persil = dj.id', 'left')
 			->join('ref_persil_kelas rk', 'p.kelas = rk.id', 'left')
 			->join('tweb_wil_clusterdesa w', 'w.id = p.id_wilayah', 'left')
 			->group_start()
@@ -380,7 +376,7 @@ class Cdesa_model extends CI_Model {
 		status_sukses($outp); //Tampilkan Pesan
 	}
 
-	public function get_cetak_bidang($id_cdesa, $tipe='')
+	public function get_cetak_mutasi($id_cdesa, $tipe='')
 	{
 		// Mutasi masuk
 		$this->db

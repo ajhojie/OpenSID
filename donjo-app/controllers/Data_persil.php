@@ -70,7 +70,7 @@ class Data_persil extends Admin_Controller {
 		$this->tab_ini = 13;
 		$data = [];
 		$data['persil'] = $this->data_persil_model->get_persil($id);
-		$data['bidang'] = $this->data_persil_model->get_list_bidang($id);
+		$data['mutasi'] = $this->data_persil_model->get_list_mutasi($id);
 		$this->load->view('header', $this->header);
 		$this->load->view('nav',$nav);
 		$this->load->view('data_persil/rincian_persil', $data);

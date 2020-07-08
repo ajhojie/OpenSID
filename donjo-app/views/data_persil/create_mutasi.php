@@ -139,7 +139,7 @@
 										<h3 class="box-title">Tambah Mutasi</h3>
 									</div>
 
-									<?php if (empty($persil['cdesa_awal']) and empty($bidang)): ?>
+									<?php if (empty($persil['cdesa_awal']) and empty($mutasi)): ?>
 										<div id="cdesa_awal">
 											<div class="box-body">
 												<a href="<?= site_url('cdesa/awal_persil/'. $cdesa[id] .'/' .$persil['id'])?>" class="btn btn-social btn-flat btn-success btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block col-sm-2" title="Kembali Ke Rincian C-Desa"><i class="fa fa-step-backward"></i>C-Desa Awal</a>
@@ -152,9 +152,9 @@
 										</div>
 									<?php endif; ?>
 
-									<div id="mutasi_persil" <?php empty($persil['cdesa_awal']) and empty($bidang) and print('style="display: none;"')?>>
+									<div id="mutasi_persil" <?php empty($persil['cdesa_awal']) and empty($mutasi) and print('style="display: none;"')?>>
 
-										<form name='mainform' action="<?= site_url('cdesa/simpan_bidang/'.$cdesa['id'].'/'.$bidang['id'])?>" method="POST"  id="validasi" class="form-horizontal">
+										<form name='mainform' action="<?= site_url('cdesa/simpan_mutasi/'.$cdesa['id'].'/'.$mutasi['id'])?>" method="POST"  id="validasi" class="form-horizontal">
 											<input name="jenis_pemilik" type="hidden" value="1">
 											<input type="hidden" name="nik_lama" value="<?= $pemilik["nik_lama"] ?>"/>
 											<input type="hidden" name="nik" value="<?= $pemilik["nik"] ?>"/>
@@ -171,19 +171,19 @@
 													<div class="form-group">
 														<label for="no_bidang_persil" class="col-sm-3 control-label">Nomor Bidang Mutasi</label>
 														<div class="col-sm-4">
-															<input name="no_bidang_persil" type="text" class="form-control input-sm digits" placeholder="Nomor urut pecahan bidang persil hasil mutasi" maxlength="2" value="<?= $bidang["no_bidang_persil"] ?>">
+															<input name="no_bidang_persil" type="text" class="form-control input-sm digits" placeholder="Nomor urut pecahan bidang persil hasil mutasi" maxlength="2" value="<?= $mutasi["no_bidang_persil"] ?>">
 														</div>
 													</div>
 													<div class="form-group">
 														<label for="luas" class="col-sm-3 control-label">Luas Mutasi (M2)</label>
 														<div class="col-sm-9">
-															<input name="luas" type="text" class="form-control input-sm luas required" placeholder="Luas Mutasi (M2)" value="<?= $bidang['luas']?>">
+															<input name="luas" type="text" class="form-control input-sm luas required" placeholder="Luas Mutasi (M2)" value="<?= $mutasi['luas']?>">
 														</div>
 													</div>
 													<div class="form-group">
 														<label for="no_objek_pajak" class="col-sm-3 control-label">Nomor Objek Pajak</label>
 														<div class="col-sm-8">
-															<input class="form-control input-sm angka" type="text" placeholder="Nomor Objek Pajak" name="no_objek_pajak" value="<?= $bidang["no_objek_pajak"] ?>">
+															<input class="form-control input-sm angka" type="text" placeholder="Nomor Objek Pajak" name="no_objek_pajak" value="<?= $mutasi["no_objek_pajak"] ?>">
 														</div>
 													</div>
 												</div>
@@ -203,7 +203,7 @@
 																<div class="input-group-addon">
 																	<i class="fa fa-calendar"></i>
 																</div>
-																<input class="form-control input-sm pull-right tgl_indo required" name="tanggal_mutasi" type="text" value="<?= tgl_indo_out($bidang['tanggal_mutasi'])?>">
+																<input class="form-control input-sm pull-right tgl_indo required" name="tanggal_mutasi" type="text" value="<?= tgl_indo_out($mutasi['tanggal_mutasi'])?>">
 															</div>
 														</div>
 													</div>
@@ -213,7 +213,7 @@
 															<select class="form-control input-sm required" name="jenis_mutasi" >
 																<option value>-- Pilih Sebab Mutasi--</option>
 																<?php foreach ($persil_sebab_mutasi as $key => $item): ?>
-																	<option value="<?= $item['id'] ?>" <?php selected($key, $bidang['jenis_mutasi'])?>><?= $item['nama']?></option>
+																	<option value="<?= $item['id'] ?>" <?php selected($key, $mutasi['jenis_mutasi'])?>><?= $item['nama']?></option>
 																<?php endforeach;?>
 															</select>
 														</div>
@@ -230,7 +230,7 @@
 															<select class="form-control select2 input-sm" id="cdesa_keluar" name="cdesa_keluar">
 																<option value='' selected="selected">-- Pilih C-DESA dari mana bidang persil ini dimutasikan --</option>
 																<?php foreach ($list_cdesa as $data): ?>
-																	<option value="<?= $data['id_cdesa']?>" <?php selected($bidang['cdesa_keluar'], $data['id_cdesa']); ?>> <?= $data['nomor']." - ".$data['namapemilik']?></option>
+																	<option value="<?= $data['id_cdesa']?>" <?php selected($mutasi['cdesa_keluar'], $data['id_cdesa']); ?>> <?= $data['nomor']." - ".$data['namapemilik']?></option>
 																<?php endforeach;?>
 															</select>
 															<label for="" class="col-sm-3 control-label"></label>
@@ -244,7 +244,7 @@
 													<div class="form-group">
 														<label for="keterangan" class="col-sm-3 control-label">Keterangan</label>
 														<div class="col-sm-9">
-															<textarea  name="keterangan" class="form-control input-sm" type="text" placeholder="Keterangan" name="ket" ><?= $bidang['keterangan']?></textarea>
+															<textarea  name="keterangan" class="form-control input-sm" type="text" placeholder="Keterangan" name="ket" ><?= $mutasi['keterangan']?></textarea>
 														</div>
 													</div>
 												</div>

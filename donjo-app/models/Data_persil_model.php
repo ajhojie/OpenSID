@@ -108,7 +108,7 @@ class Data_persil_model extends CI_Model {
 		return $data;
 	}
 
-	public function get_list_bidang($id)
+	public function get_list_mutasi($id)
 	{
 		$this->db
 			->select('m.*, m.id_cdesa_masuk, c.nomor as cdesa_masuk, k.id as id_cdesa_keluar')

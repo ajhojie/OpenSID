@@ -38,7 +38,7 @@
 
 										<div id="warga_desa">
 											<div class="form-group">
-												<label class="col-sm-3 control-label" >Cari Nama Pemilik 1</label>
+												<label class="col-sm-3 control-label" >Cari Nama Pemilik</label>
 												<div class="col-sm-8">
 													<select class="form-control input-sm select2" style="width: 100%;" id="nik" name="nik" onchange="ubah_pemilik($('#jenis_pemilik').val());">
 														<option value="">-- Silakan Masukan NIK / Nama --</option>

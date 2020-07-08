@@ -84,7 +84,7 @@ class Cdesa extends Admin_Controller {
 		$data = array();
 		$data['cdesa'] = $this->cdesa_model->get_cdesa($id_cdesa);
 		$data['pemilik'] = $this->cdesa_model->get_pemilik($id_cdesa);
-		$data['bidang'] = $this->cdesa_model->get_list_bidang($id_cdesa, $id_persil);
+		$data['mutasi'] = $this->cdesa_model->get_list_mutasi($id_cdesa, $id_persil);
 		$data['persil'] = $this->data_persil_model->get_persil($id_persil);
 		if (empty($data['cdesa'])) show_404();
 
@@ -181,7 +181,7 @@ class Cdesa extends Admin_Controller {
 
 			$id_cdesa = $this->cdesa_model->simpan_cdesa();
 			if ($this->input->post('id')) redirect("cdesa");
-			else redirect("cdesa/create_bidang/$id_cdesa");
+			else redirect("cdesa/create_mutasi/$id_cdesa");
 		}
 		else
 		{
@@ -206,7 +206,7 @@ class Cdesa extends Admin_Controller {
 		}
 	}
 
-	public function create_bidang($id_cdesa, $id_persil='', $id_bidang='')
+	public function create_mutasi($id_cdesa, $id_persil='', $id_mutasi='')
 	{
 		$this->load->helper('form');
 		$this->load->library('form_validation');
@@ -226,10 +226,10 @@ class Cdesa extends Admin_Controller {
 			$data['persil'] = NULL;
 		}
 
-		if ($id_bidang)
+		if ($id_mutasi)
 		{
-			$data['persil'] = $this->cdesa_model->get_persil($id_bidang);
-			$data["bidang"] = $this->cdesa_model->get_bidang($id_bidang);
+			$data['persil'] = $this->cdesa_model->get_persil($id_mutasi);
+			$data["mutasi"] = $this->cdesa_model->get_mutasi($id_mutasi);
 		}
 		$data['cdesa'] = $this->cdesa_model->get_cdesa($id_cdesa);
 		$data['list_cdesa'] = $this->cdesa_model->list_c_desa(0, 0, [$id_cdesa]);
@@ -242,26 +242,26 @@ class Cdesa extends Admin_Controller {
 
 		$this->load->view('header', $header);
 		$this->load->view('nav', $nav);
-		$this->load->view('data_persil/create_bidang', $data);
+		$this->load->view('data_persil/create_mutasi', $data);
 		$this->load->view('footer');
 	}
 
-	public function simpan_bidang($id_cdesa, $id_bidang='')
+	public function simpan_mutasi($id_cdesa, $id_mutasi='')
 	{
-		$data = $this->cdesa_model->simpan_mutasi($id_cdesa, $id_bidang, $this->input->post());
+		$data = $this->cdesa_model->simpan_mutasi($id_cdesa, $id_mutasi, $this->input->post());
 		if ($data['id_persil'])
 			redirect("cdesa/mutasi/$id_cdesa/$data[id_persil]");
 		else
 			redirect("cdesa/rincian/$id_cdesa");
 	}
 
-	public function hapus_bidang($cdesa, $id_bidang)
+	public function hapus_mutasi($cdesa, $id_mutasi)
 	{
 		$id_persil = $this->db->select('id_persil')
-			->where('id', $id_bidang)
+			->where('id', $id_mutasi)
 			->get('mutasi_cdesa')
 			->row()->id_persil;
-		$this->db->where('id', $id_bidang)
+		$this->db->where('id', $id_mutasi)
 			->delete('mutasi_cdesa');
 		redirect("cdesa/mutasi/$cdesa/$id_persil");
 	}
@@ -340,8 +340,8 @@ class Cdesa extends Admin_Controller {
 	{
 		$data['desa'] = $this->config_model->get_data();
 		$data['cdesa'] = $this->cdesa_model->get_cdesa($id);
-		$data['basah'] = $this->cdesa_model->get_cetak_bidang($id, 'BASAH');
-		$data['kering'] = $this->cdesa_model->get_cetak_bidang($id, 'KERING');
+		$data['basah'] = $this->cdesa_model->get_cetak_mutasi($id, 'BASAH');
+		$data['kering'] = $this->cdesa_model->get_cetak_mutasi($id, 'KERING');
 		$this->load->view('data_persil/c_desa_form_print', $data);
 	}
 
